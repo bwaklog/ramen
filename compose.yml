@@ -1,0 +1,39 @@
+services:
+    nginx:
+        image: "nginx:alpine"
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+        ports:
+            - "8080:80"
+        depends_on:
+            - web
+        networks:
+            - backend
+    redis:
+        image: "redis:alpine"
+        volumes:
+            - store-data:/etc/data/
+        networks:
+            - backend
+    web:
+        build: .
+        ports:
+            - "8080"
+        restart: always
+        deploy:
+            mode: replicated
+            replicas: 2
+        depends_on:
+            - redis
+        networks:
+            - backend
+        develop:
+            watch:
+                - action: rebuild
+                  path: .
+                  target: /usr/src/app
+networks:
+    backend:
+
+volumes:
+    store-data:
