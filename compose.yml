@@ -16,22 +16,25 @@ services:
         networks:
             - backend
     web:
-        build: .
+        # build: .
+        image: "ramen:latest"
         ports:
             - "8080"
         restart: always
         deploy:
             mode: replicated
             replicas: 2
+            restart_policy:
+                condition: on-failure
         depends_on:
             - redis
         networks:
             - backend
-        develop:
-            watch:
-                - action: rebuild
-                  path: .
-                  target: /usr/src/app
+        # develop:
+        #     watch:
+        #         - action: rebuild
+        #           path: .
+        #           target: /usr/src/app
 networks:
     backend:
 

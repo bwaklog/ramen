@@ -11,4 +11,4 @@ RUN CGO_ENABLED=0 GOOS=linux go build
 
 EXPOSE 8080
 
-CMD ["./ramen"]
+CMD ["./ramen", "8080"]

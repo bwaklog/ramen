@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"ramen/pkg"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	redisStore, err := pkg.NewClient("redis:6379", "", 0)
+	redisStore, err := pkg.NewClient("localhost:6379", "", 0)
 	if err != nil {
 		log.Println(err)
 	}
@@ -18,6 +20,11 @@ func main() {
 	log.Println("Accepting TCP connections")
 
 	r := gin.Default()
+
+	r.GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "alive")
+	})
+
 	r.GET("/get/:key", func(c *gin.Context) {
 		key := c.Param("key")
 		message := redisStore.Get(key)
@@ -43,7 +50,14 @@ func main() {
 		}
 	})
 
-	err = r.Run("0.0.0.0:8080")
+	r.GET("/slow/get/:key", func(c *gin.Context) {
+		key := c.Param("key")
+		time.Sleep(5 * time.Second)
+		message := redisStore.Get(key)
+		c.String(http.StatusOK, message)
+	})
+
+	err = r.Run(fmt.Sprintf("127.0.0.1:%s", os.Args[1]))
 	if err != nil {
 		log.Fatalln(err)
 	}

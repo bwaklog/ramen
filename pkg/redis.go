@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -52,9 +51,6 @@ func (c *Store) Get(key string) string {
 	} else {
 		message = fmt.Sprintf("[GET]: %s has value %s", key, val)
 	}
-
-	time.Sleep(2 * time.Second)
-
 	return message
 }
 
