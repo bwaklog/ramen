@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"ramen/pkg"
 	"time"
 
@@ -12,7 +11,7 @@ import (
 )
 
 func main() {
-	redisStore, err := pkg.NewClient("localhost:6379", "", 0)
+	redisStore, err := pkg.NewClient("redis:6379", "", 0)
 	if err != nil {
 		log.Println(err)
 	}
@@ -57,7 +56,7 @@ func main() {
 		c.String(http.StatusOK, message)
 	})
 
-	err = r.Run(fmt.Sprintf("127.0.0.1:%s", os.Args[1]))
+	err = r.Run(fmt.Sprintf("0.0.0.0:8080"))
 	if err != nil {
 		log.Fatalln(err)
 	}

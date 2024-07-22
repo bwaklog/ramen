@@ -16,14 +16,14 @@ services:
         networks:
             - backend
     web:
-        # build: .
-        image: "ramen:latest"
+        build: .
+        # image: "ramen:latest"
         ports:
             - "8080"
         restart: always
         deploy:
             mode: replicated
-            replicas: 2
+            replicas: 10
             restart_policy:
                 condition: on-failure
         depends_on:
