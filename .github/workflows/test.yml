@@ -1,0 +1,51 @@
+name: NGINX test
+
+on: [push, workflow_dispatch]
+
+defaults:
+    run:
+        shell: bash
+
+jobs:
+    nginx-load-test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install Dependencies
+              run: |
+                  sudo apt-get install git curl make
+
+            - name: Install Go
+              uses: actions/setup-go@v5
+
+            - name: Install Vegeta from binaries
+              run: |
+                  git clone https://github.com/tsenart/vegeta
+                  cd vegeta
+                  make vegeta
+                  sudo mv vegeta /usr/local/bin
+                  # mv vegeta ~/bin
+                  # export PATH=$PATH:~/bin
+
+            - name: Verify Vegeta installation
+              run: |
+                  vegeta --version
+
+            - name: Start docker compose
+              run: |
+                  docker compose -f compose.yml up -d
+
+            - name: Verify services are running
+              run: |
+                  docker ps
+
+            - name: Test http get to /
+              run: |
+                  curl localhost:8080
+
+            - name: Load Test
+              run: |
+                  curl localhost:8080/set/x/5
+                  echo "GET localhost:8080/get/x" | vegeta attack -duration=10s -rate=1000 | vegeta report
