@@ -16,8 +16,8 @@ services:
         networks:
             - backend
     web:
-        # build: .
-        image: "bwaklog/ramen:1.2"
+        build: .
+        # image: "bwaklog/ramen:1.2"
         ports:
             - "8080"
         restart: always
